@@ -1,8 +1,36 @@
 # CarND-Controls-MPC
 Self-Driving Car Engineer Nanodegree Program
 
----
+## Implementation
+### The Model
+ + Student describes their model in detail. This includes the state, actuators and update equations.
+The kinematic model is in blow. the x ,y is the vehicle's coordinates. The psi is orientation angle means car's haeding direction. the v_t  is  current car's velocity. the cte is  Cross-track error. and the epsi is the psi 's error. by these values,we can descript the car's status with value. Lf means the distance between the car of mass and the front wheels.the a is car's throttle.the delta is Steering angle.
+![](2018-07-02-23-58-07.png)
+the params descript car's status is x, y, psi, v, cte, epsi;
 
+### N & dt
++ Student discusses the reasoning behind the chosen N (timestep length) and dt (elapsed duration between timesteps) values. Additionally the student details the previous values tried.
+ According to Udacity's suggestion, N and dt chose 10 and 0.1. Indicates that the current controller samples once every second（N * dt = 10 * 0.1 s）. N and dt define the controller's horizon. N affects controller performance. If the number of points is large, the controller response speed will be slower.
+
+根据Udacity的建议，N和dt 选择了10和0.1。表示当前控制器每一秒进行一次采样。N和dt定义了控制器的预测范围。N影响控制器性能。如果点数多，控制器响应速度会变慢。
+
+### Polynomial Fitting and MPC Preprocessing
+
++ A polynomial is fitted to waypoints. If the student preprocesses waypoints, the vehicle state, and/or actuators prior to the MPC procedure it is described.
+
+The coordinate conversion was done in main.cpp (line 105-117). After the coordinate transformation, the fitting is performed and the fitting result is a polynomial of degree 3. When calculating cte and epsi, the coefficients of this polynomial are used.
+
+在main.cpp(line 105-117)中进行了坐标转换。坐标转换后，进行拟合，拟合结果为3次多项式。在计算cte和epsi时，使用了该多项式的系数。
+
+### Model Predictive Control with Latency
+
++ The student implements Model Predictive Control that handles a 100 millisecond latency. Student provides details on how they deal with latency.
+
+Based on the current model, delay processing has been added. The current system set delay time (100 milliseconds) is brought into the model to modify the current car state. After the controller is heavy, it uses the modified state to make calculations. For details, see the code (MCP.cpp line 270 -288 function GetDelayState() ).
+after get state  in main.cpp line 124, the state is put into mpc.slove function;
+
+
+在当前模型基础上，加入了延迟处理。将当前系统设定的延迟时间（100毫秒）带入到了模型中，对当前汽车状态进行修改。在之后的控制器重，使用修改后的状态进行测算，具体实现参见代码中（MCP.cpp line270 -288  function GetDelayState() ）
 ## Dependencies
 
 * cmake >= 3.5
