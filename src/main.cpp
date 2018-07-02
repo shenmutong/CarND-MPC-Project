@@ -91,15 +91,57 @@ int main() {
           double py = j[1]["y"];
           double psi = j[1]["psi"];
           double v = j[1]["speed"];
+          double delta = j[1]["steering_angle"];
+          double a = j[1]["throttle"]
 
           /*
           * TODO: Calculate steering angle and throttle using MPC.
           *
           * Both are in between [-1, 1].
           *
-          */
+          */         
           double steer_value;
           double throttle_value;
+          int x_size = ptsx.size();
+          auto ptsx_tf = Eigen::VectorXd(x_size);
+          auto ptsy_tf = Eigen::VectorXd(x_size);
+          // transforms coordinates 
+          for(int i =0; i < x_size; i++){
+            double d_x = ptsx[i] - px;
+            double d_y = ptsy[i] -py;
+            double d_psi = - psi;
+
+            ptsx_tf(i) = d_x * cos(d_psi) - d_y * sin(d_psi);
+            ptsy_tf(i) = d_y * sin(d_psi) - d_y * cos(d_psi);
+          }
+          auto coeffs = ployfit(ptsx_tf,ptsy_ty,3);
+          
+          double delay_ms = 100;
+          double delay_s = delay_ms/ 1000.0;
+
+           // Initial state.
+          const double x0 = 0;
+          const double y0 = 0;
+          const double psi0 = 0;
+          const double cte0 = coeffs[0];
+          const double epsi0 = -atan(coeffs[1]);
+
+          // State after delay.
+          double x_delay = x0 + ( v * cos(psi0) * delay );
+          double y_delay = y0 + ( v * sin(psi0) * delay );
+          double psi_delay = psi0 - ( v * delta * delay / mpc.Lf );
+          double v_delay = v + a * delay;
+          double cte_delay = cte0 + ( v * sin(epsi0) * delay );
+          double epsi_delay = epsi0 - ( v * atan(coeffs[1]) * delay / mpc.Lf );
+
+          // Define the state vector.
+          Eigen::VectorXd state(6);
+          state << x_delay, y_delay, psi_delay, v_delay, cte_delay, epsi_delay;
+          // Find the MPC solution.
+          auto vars = mpc.Solve(state, coeffs);
+
+          double steer_value = vars[0]/deg2rad(25);
+          double throttle_value = vars[1];
 
           json msgJson;
           // NOTE: Remember to divide by deg2rad(25) before you send the steering value back.

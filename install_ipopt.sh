@@ -1,11 +1,12 @@
 # Pass the Ipopt source directory as the first argument
-if [ -z $1 ]
-then
-    echo "Specifiy the location of the Ipopt source directory in the first argument."
-    exit
-fi
-cd $1
-
+#if [ -z $1 ]
+#then
+ #   echo "Specifiy the location of the Ipopt source directory in the first argument."
+#    exit
+#fi
+#[ -z $1]
+#cd $1
+cd ./Ipopt-3.12.7
 prefix=/usr/local
 srcdir=$PWD
 
