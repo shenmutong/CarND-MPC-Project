@@ -8,7 +8,6 @@ add_definitions(-std=c++11 -O3)
 
 set(CXX_FLAGS "-Wall")
 set(CMAKE_CXX_FLAGS "${CXX_FLAGS}")
-
 set(sources src/MPC.cpp src/main.cpp)
 
 include_directories(/usr/local/include)

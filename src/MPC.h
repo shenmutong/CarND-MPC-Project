@@ -15,6 +15,9 @@ class MPC {
   // Solve the model given an initial state and polynomial coefficients.
   // Return the first actuatotions.
   vector<double> Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs);
+
+  Eigen::VectorXd GetDelayState(Eigen::VectorXd coeffs ,double cte0 ,double v,double a,double delta,double psi);
+  double delay_ms = 100;
 };
 
 #endif /* MPC_H */
